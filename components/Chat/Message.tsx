@@ -2,10 +2,19 @@ import useToolCall from "@/hooks/useToolCall";
 import { useChatProvider } from "@/providers/ChatProvider";
 import { Message as AIMessage } from "ai";
 import { UserIcon, TvMinimalPlay, LoaderCircle } from "lucide-react";
+import { useEffect } from "react";
 import ReactMarkdown from "react-markdown";
+import FanTable from "./FanTable";
+import { FAN_TYPE } from "@/types/fans";
 
-const Message = ({ message }: { message: AIMessage }) => {
-  const { loading, answer } = useToolCall(message);
+const Message = ({
+  message,
+  scroll,
+}: {
+  message: AIMessage;
+  scroll: ({ smooth, y }: { smooth: boolean; y: number }) => void;
+}) => {
+  const { loading, answer, toolName, context } = useToolCall(message);
   const { pending } = useChatProvider();
   const isHidden =
     pending &&
@@ -13,8 +22,24 @@ const Message = ({ message }: { message: AIMessage }) => {
     !message.content &&
     message?.toolInvocations;
 
+  const content = message.content || answer;
+  const fans = context?.fans
+    ?.filter((fan: FAN_TYPE) => fan.name !== "Unknown")
+    ?.slice(0, 25);
+
+  const scrollTo = () => scroll({ smooth: true, y: Number.MAX_SAFE_INTEGER });
+  useEffect(() => {
+    scrollTo();
+    setTimeout(() => {
+      scrollTo();
+    }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [content, context]);
+
   return (
-    <div className={`p-3 rounded-lg flex w-full gap-2 ${isHidden && "hidden"}`}>
+    <div
+      className={`p-3 rounded-lg flex ${context && `flex-col`} w-full gap-2 ${isHidden && "hidden"}`}
+    >
       <div className="size-fit">
         {message.role === "user" ? (
           <UserIcon className="h-6 w-6" />
@@ -22,6 +47,7 @@ const Message = ({ message }: { message: AIMessage }) => {
           <TvMinimalPlay className="h-6 w-6" />
         )}
       </div>
+      {toolName === "getCampaign" && context && <FanTable fans={fans} />}
       {loading && !message.content && !answer ? (
         <div className="flex gap-2 items-center">
           <p>is thinking...</p>
@@ -29,7 +55,7 @@ const Message = ({ message }: { message: AIMessage }) => {
         </div>
       ) : (
         <div className="text-sm font-sans text-pretty break-words">
-          <ReactMarkdown>{message.content || answer}</ReactMarkdown>
+          <ReactMarkdown>{content}</ReactMarkdown>
         </div>
       )}
     </div>
