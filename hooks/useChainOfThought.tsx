@@ -83,6 +83,10 @@ const useChainOfThought = () => {
       if (videoComments.videos.length > 0) {
         setThought(STEP_OF_ANALYSIS.SEGMENTS);
         fanSegmentsWithIcons = await getSegments(profileWithComments);
+        if (fanSegmentsWithIcons?.error) {
+          setThought(STEP_OF_ANALYSIS.ERROR);
+          return;
+        }
         setSegments([...fanSegmentsWithIcons]);
       }
       setSettingMode(SETTING_MODE.CREATE);

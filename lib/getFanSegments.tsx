@@ -11,11 +11,12 @@ const getFanSegments = async (context: any) => {
       },
     });
 
+    if (!response.ok) return { error: true };
     const data = await response.json();
     return data.data;
   } catch (error) {
     console.error(error);
-    return [];
+    return { error };
   }
 };
 

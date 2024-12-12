@@ -14,6 +14,7 @@ const getSegmentsIcons = async (fanSegments: any) => {
       },
     });
 
+    if (!response.ok) return { error: true };
     const data = await response.json();
 
     // eslint-disable-next-line  @typescript-eslint/no-explicit-any
@@ -30,7 +31,7 @@ const getSegmentsIcons = async (fanSegments: any) => {
     return fanSegmentsWithIcons;
   } catch (error) {
     console.error(error);
-    return [];
+    return { error };
   }
 };
 
