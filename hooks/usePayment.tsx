@@ -7,6 +7,9 @@ const usePayment = () => {
   const [loading, setLoading] = useState(false);
   const { chat_id: chatId } = useParams();
   const { userData } = useUserProvider();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const createCheckoutSession = async (
     productName: string,
@@ -32,6 +35,9 @@ const usePayment = () => {
     loading,
     setLoading,
     createCheckoutSession,
+    isModalOpen,
+    setIsModalOpen,
+    toggleModal,
   };
 };
 
