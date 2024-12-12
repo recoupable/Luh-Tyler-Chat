@@ -1,9 +1,10 @@
 export const createSession = async (
   successUrl: string,
-  priceId: string,
+  productName: string,
   referenceId: string,
-  chatId: string,
-  accountId: string,
+  subscriptionActive: boolean,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  metadata: any,
 ) => {
   try {
     const response = await fetch(`/api/stripe/session/create`, {
@@ -13,12 +14,10 @@ export const createSession = async (
       },
       body: JSON.stringify({
         successUrl,
-        priceId,
+        productName,
         referenceId,
-        metadata: {
-          chatId,
-          accountId,
-        },
+        subscriptionActive,
+        metadata,
       }),
     });
 

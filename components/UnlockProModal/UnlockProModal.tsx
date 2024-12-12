@@ -4,6 +4,8 @@ import { ArrowRight, X } from "lucide-react";
 import Modal from "../Modal";
 import useIsMobile from "@/hooks/useIsMobile";
 import Icon from "../Icon";
+import { useUserProvider } from "@/providers/UserProvder";
+import { usePaymentProvider } from "@/providers/PaymentProvider";
 
 const UnlockProModal = ({
   isModalOpen,
@@ -13,6 +15,14 @@ const UnlockProModal = ({
   toggleModal: () => void;
 }) => {
   const isMobile = useIsMobile();
+  const { isPrepared } = useUserProvider();
+  const { createCheckoutSession } = usePaymentProvider();
+
+  const pay = async (productName: string, subscriptionActive: boolean) => {
+    if (!isPrepared()) return;
+    await createCheckoutSession(productName, subscriptionActive);
+    return;
+  };
 
   return (
     <>
@@ -66,13 +76,18 @@ const UnlockProModal = ({
               <button
                 type="button"
                 className="flex gap-2 justify-center items-center bg-black rounded-lg text-white w-fit px-3 py-2 mt-3 mb-2 font-inter_bold text-sm"
+                onClick={() => pay("Unlimited subscription", true)}
               >
                 Activate Your AI Agent Today
                 <ArrowRight className="size-5" />
               </button>
-              <p className="font-inter_medium italic text-xs">
+              <button
+                className="font-inter_medium italic text-xs text-left"
+                type="button"
+                onClick={() => pay("1 Credit", false)}
+              >
                 Or unlock individual fan segment reports for $2
-              </p>
+              </button>
             </div>
           </div>
         </Modal>

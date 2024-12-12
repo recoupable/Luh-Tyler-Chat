@@ -1,11 +1,9 @@
 import { ArrowRight } from "lucide-react";
 import Icon from "../Icon";
-import UnlockProModal from "../UnlockProModal";
-import { useState } from "react";
+import { usePaymentProvider } from "@/providers/PaymentProvider";
 
 const UnlockPro = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const toggleModal = () => setIsModalOpen(!isModalOpen);
+  const { toggleModal } = usePaymentProvider();
 
   return (
     <>
@@ -37,7 +35,6 @@ const UnlockPro = () => {
           </button>
         </div>
       </div>
-      <UnlockProModal isModalOpen={isModalOpen} toggleModal={toggleModal} />
     </>
   );
 };

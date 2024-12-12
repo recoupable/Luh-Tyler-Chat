@@ -18,11 +18,11 @@ const getBaseCampaign = async (artistId: string, email: string) => {
   const freeCount =
     campaign?.fans?.filter((fan: FAN_TYPE) => fan.product === "free")?.length ||
     0;
-  const episodes_names = campaign?.episodes.map(
+  const episodes_names = campaign?.episodes?.map(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (episode: any) => episode.name,
   );
-  const episodes_descriptions = campaign?.episodes.map(
+  const episodes_descriptions = campaign?.episodes?.map(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (episode: any) => episode.description,
   );
