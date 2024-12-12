@@ -1,18 +1,20 @@
 import { useTikTokAnalysisProvider } from "@/providers/TIkTokAnalysisProvider";
 import Icon from "@/components/Icon";
 import LucideIcon from "@/components/LucideIcon";
-import { usePaymentProvider } from "@/providers/PaymentProvider";
 import decreaseCredits from "@/lib/supabase/decreaseCredits";
 import getCredits from "@/lib/supabase/getCredits";
 import { useUserProvider } from "@/providers/UserProvder";
 import { v4 as uuidV4 } from "uuid";
 import { useChatProvider } from "@/providers/ChatProvider";
+import useCredits from "@/hooks/useCredits";
+import { usePaymentProvider } from "@/providers/PaymentProvider";
 
 const Segments = () => {
   const { append } = useChatProvider();
-  const { segments, username, result } = useTikTokAnalysisProvider();
-  const { createCheckoutSession } = usePaymentProvider();
+  const { segments, result } = useTikTokAnalysisProvider();
   const { userData, isPrepared } = useUserProvider();
+  useCredits();
+  const { toggleModal, setSuccessCallbackParams } = usePaymentProvider();
 
   const handleGenerateReport = (segmentName: string) => {
     append(
@@ -29,9 +31,8 @@ const Segments = () => {
     if (!isPrepared()) return;
     const credits = await getCredits(userData?.id);
     if (!credits?.remaining_credits) {
-      await createCheckoutSession(
-        `${result?.name || username}'s fan segment report: ${segmentName}`,
-      );
+      setSuccessCallbackParams(new URLSearchParams({ segmentName }).toString());
+      toggleModal();
       return;
     }
     await decreaseCredits(userData?.id);
